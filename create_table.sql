@@ -18,3 +18,22 @@ CREATE TABLE coaches (
     birth_date DATE,
     FOREIGN KEY (country_code) REFERENCES countries(country_code)
 );
+
+CREATE TABLE athletes (
+    code INT PRIMARY KEY,
+    name VARCHAR(255),
+    name_short VARCHAR(50),
+    name_tv VARCHAR(100),
+    gender VARCHAR(10),
+    job_title VARCHAR(50),
+    country_code CHAR(3),
+    height_ FLOAT,
+    weight_ FLOAT,
+    disciplines TEXT,
+    events TEXT,
+    birth_date DATE,
+    lang TEXT,
+    coach_code INT,
+    FOREIGN KEY (country_code) REFERENCES countries(country_code),
+    FOREIGN KEY (coach_code) REFERENCES coaches(code)
+);
