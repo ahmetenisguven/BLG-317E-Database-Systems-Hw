@@ -13,10 +13,11 @@ CREATE TABLE coaches (
     job_title VARCHAR(50), -- Renamed from "function" cuz function name can't be used.
     category CHAR(1),
     country_code CHAR(3), 
-    disciplines VARCHAR(100),
+    sport VARCHAR(100),
     events VARCHAR(50),
     birth_date DATE,
-    FOREIGN KEY (country_code) REFERENCES countries(country_code)
+    FOREIGN KEY (country_code) REFERENCES countries(country_code),
+    FOREIGN KEY (sport) REFERENCES sports(sport)
 );
 
 CREATE TABLE athletes (
@@ -29,11 +30,18 @@ CREATE TABLE athletes (
     country_code CHAR(3),
     height_ FLOAT,
     weight_ FLOAT,
-    disciplines TEXT,
+    sport VARCHAR(100), -- in database table, this column is in ['<sport>'] template. dont forget to delete when inserting
     events TEXT,
     birth_date DATE,
     lang TEXT,
     coach_code INT,
     FOREIGN KEY (country_code) REFERENCES countries(country_code),
-    FOREIGN KEY (coach_code) REFERENCES coaches(code)
+    FOREIGN KEY (coach_code) REFERENCES coaches(code),
+    FOREIGN KEY (sport) REFERENCES sports(sport)
+);
+
+CREATE TABLE sports (
+    sport VARCHAR(100) PRIMARY KEY,
+    sport_code CHAR(3), 
+    sport_URL VARCHAR(255)
 );
