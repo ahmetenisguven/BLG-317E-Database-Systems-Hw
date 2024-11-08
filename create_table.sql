@@ -12,7 +12,7 @@ CREATE TABLE sports (
 
 CREATE TABLE coaches (
     code VARCHAR(50) PRIMARY KEY,
-    current BOOLEAN,
+    current_status BOOLEAN,
     name VARCHAR(100),
     name_short VARCHAR(50),
     gender VARCHAR(10),
@@ -41,7 +41,7 @@ CREATE TABLE athletes (
     events TEXT,
     birth_date DATE,
     lang TEXT,
-    coach_code INT,
+    coach_code VARCHAR(50),
     FOREIGN KEY (country_code) REFERENCES countries(country_code),
     FOREIGN KEY (coach_code) REFERENCES coaches(code),
     FOREIGN KEY (sport) REFERENCES sports(sport)
@@ -53,16 +53,32 @@ CREATE TABLE teams (
     team VARCHAR(100),
     team_gender VARCHAR(2),
     country_code CHAR(3),
-    country VARCHAR(50),
-    country_long VARCHAR(100),
     sport VARCHAR(100),
-    sport_code CHAR(3),
     events TEXT,
+    num_athletes INT,
+    num_coaches INT,
     
     FOREIGN KEY (country_code) REFERENCES countries(country_code),
-    FOREIGN KEY (country) REFERENCES countries(country),
-    FOREIGN KEY (country_long) REFERENCES countries(country_long),
-    FOREIGN KEY (sport) REFERENCES sports(sport),
-    FOREIGN KEY (sport_code) REFERENCES sports(sport_code)
+    FOREIGN KEY (sport) REFERENCES sports(sport)
     
 );
+
+CREATE TABLE teams_member ( 
+    teams_code VARCHAR(50),
+    roles BOOLEAN, -- if true(1) coaches_code = NULL else athletes_code = NULL
+    athletes_code VARCHAR(50),
+    coaches_code VARCHAR(50),
+    FOREIGN KEY (teams_code) REFERENCES teams(code),
+    FOREIGN KEY (athletes_code) REFERENCES athletes(code),
+    FOREIGN KEY (coaches_code) REFERENCES coaches(code)
+)
+
+CREATE TABLE medals (
+    medal_date DATE,
+    medal_type ENUM('gold', 'silver', 'bronze'), -- 1 Gold 2 Silver 3 Bronze
+    sport VARCHAR(100),
+    athletes_code VARCHAR(50),
+    teams_code VARCHAR(50),
+    FOREIGN KEY (teams_code) REFERENCES teams(code),
+    FOREIGN KEY (athletes_code) REFERENCES athletes(code)
+)
