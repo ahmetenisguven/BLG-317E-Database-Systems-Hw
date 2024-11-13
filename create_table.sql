@@ -1,19 +1,19 @@
 CREATE TABLE countries (
-    country_code CHAR(3) PRIMARY KEY,
-    country VARCHAR(50),
+    country_code CHAR(3) PRIMARY KEY NOT NULL,
+    country VARCHAR(50) NOT NULL,
     country_long VARCHAR(100)
 );
 
 CREATE TABLE sports (
-    sport VARCHAR(100) PRIMARY KEY,
-    sport_code CHAR(3), 
+    sport VARCHAR(100) PRIMARY KEY NOT NULL,
+    sport_code CHAR(3) NOT NULL, 
     sport_URL VARCHAR(255)
 );
 
 CREATE TABLE coaches (
-    code VARCHAR(50) PRIMARY KEY,
+    code VARCHAR(50) PRIMARY KEY NOT NULL,
     current_status BOOLEAN,
-    name VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
     name_short VARCHAR(50),
     gender VARCHAR(10),
     job_title VARCHAR(50), -- Renamed from "function" cuz function name can't be used.
@@ -27,9 +27,9 @@ CREATE TABLE coaches (
 );
 
 CREATE TABLE athletes (
-    code VARCHAR(50) PRIMARY KEY,
+    code VARCHAR(50) PRIMARY KEY NOT NULL,
     current_status BOOLEAN,
-    name VARCHAR(255),
+    name VARCHAR(255) NOT NULL,
     name_short VARCHAR(50),
     name_tv VARCHAR(100),
     gender VARCHAR(10),
@@ -44,13 +44,14 @@ CREATE TABLE athletes (
     coach_code VARCHAR(50),
     FOREIGN KEY (country_code) REFERENCES countries(country_code),
     FOREIGN KEY (coach_code) REFERENCES coaches(code),
-    FOREIGN KEY (sport) REFERENCES sports(sport)
+    FOREIGN KEY (sport) REFERENCES sports(sport),
+    CHECK(sport NOT LIKE '[%]')
 );
 
 CREATE TABLE teams (
-    code VARCHAR(50) PRIMARY KEY,
+    code VARCHAR(50) PRIMARY KEY NOT NULL,
     current_status BOOLEAN,
-    team VARCHAR(100),
+    team VARCHAR(100) NOT NULL,
     team_gender VARCHAR(2),
     country_code CHAR(3),
     sport VARCHAR(100),
