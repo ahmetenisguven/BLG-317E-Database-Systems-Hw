@@ -1,4 +1,3 @@
--- Active: 1730532178836@@127.0.0.1@3306@project_db
 INSERT INTO countries(country_code, country, country_long) VALUES('AFG','Afghanistan','Afghanistan')
 ,('AHO','Netherlands Antilles','Netherlands Antilles')
 ,('AIN','AIN','AIN')
@@ -42,7 +41,7 @@ INSERT INTO countries(country_code, country, country_long) VALUES('AFG','Afghani
 ,('CHI','Chile','Chile')
 ,('CHN','China','Peoples Republic of China')
 ,('CIS','CIS','Commonwealth of Independent States')
-,('CIV','Côte dIvoire','Côte dIvoire')
+,('CIV','Cote dIvoire','Cote dIvoire')
 ,('CMR','Cameroon','Cameroon')
 ,('COD','DR Congo','Democratic Republic of the Congo')
 ,('COK','Cook Islands','Cook Islands')
@@ -206,7 +205,7 @@ INSERT INTO countries(country_code, country, country_long) VALUES('AFG','Afghani
 ,('TPE','Chinese Taipei','Chinese Taipei')
 ,('TTO','Trinidad and Tobago','Trinidad and Tobago')
 ,('TUN','Tunisia','Tunisia')
-,('TUR','Türkiye','Türkiye')
+,('TUR','Turkiye','Turkiye')
 ,('TUV','Tuvalu','Tuvalu')
 ,('UAE','UA Emirates','United Arab Emirates')
 ,('UGA','Uganda','Uganda')

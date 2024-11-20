@@ -14,7 +14,6 @@ CREATE TABLE coaches (
     code VARCHAR(50) PRIMARY KEY NOT NULL,
     current_status BOOLEAN,
     name VARCHAR(100) NOT NULL,
-    name_short VARCHAR(50),
     gender VARCHAR(10),
     job_title VARCHAR(50), -- Renamed from "function" cuz function name can't be used.
     category CHAR(1),
