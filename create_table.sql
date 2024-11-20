@@ -73,10 +73,11 @@ CREATE TABLE teams_member (
 
 CREATE TABLE medals (
     medal_date DATE,
-    medal_type ENUM('gold', 'silver', 'bronze'), -- 1 Gold 2 Silver 3 Bronze
+    medal_type ENUM('Gold Medal', 'Silver Medal', 'Bronze Medal'), -- 1 Gold 2 Silver 3 Bronze
     sport VARCHAR(100),
     athletes_code VARCHAR(50),
     teams_code VARCHAR(50),
-    FOREIGN KEY (teams_code) REFERENCES teams(code),
-    FOREIGN KEY (athletes_code) REFERENCES athletes(code)
+    FOREIGN KEY (teams_code) REFERENCES teams (code),
+    FOREIGN KEY (athletes_code) REFERENCES athletes (code),
+    FOREIGN KEY (sport) REFERENCES sports (sport)
 )
