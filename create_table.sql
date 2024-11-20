@@ -41,11 +41,9 @@ CREATE TABLE athletes (
     events TEXT,
     birth_date DATE,
     lang TEXT,
-    coach_code VARCHAR(50),
     FOREIGN KEY (country_code) REFERENCES countries(country_code),
-    FOREIGN KEY (coach_code) REFERENCES coaches(code),
     FOREIGN KEY (sport) REFERENCES sports(sport),
-    CHECK(sport NOT LIKE '[%]')
+    CHECK(sport NOT LIKE '[%,%]')
 );
 
 CREATE TABLE teams (
