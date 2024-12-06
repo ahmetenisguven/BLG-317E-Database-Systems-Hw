@@ -81,3 +81,11 @@ CREATE TABLE medals (
     FOREIGN KEY (athletes_code) REFERENCES athletes (code),
     FOREIGN KEY (sport) REFERENCES sports (sport)
 )
+
+CREATE TABLE users (
+    user_name VARCHAR(50),
+    password_ VARCHAR(50), -- 1 Gold 2 Silver 3 Bronze
+    register_date DATE,
+    high_score INT
+)
+
