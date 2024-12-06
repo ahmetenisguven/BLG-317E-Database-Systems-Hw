@@ -86,6 +86,7 @@ CREATE TABLE users (
     user_name VARCHAR(50),
     password_ VARCHAR(50), -- 1 Gold 2 Silver 3 Bronze
     register_date DATE,
-    high_score INT
+    high_score INT,
+    game_played INT
 )
 
