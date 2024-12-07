@@ -83,10 +83,10 @@ CREATE TABLE medals (
 )
 
 CREATE TABLE users (
-    user_name VARCHAR(50),
-    password_ VARCHAR(50), -- 1 Gold 2 Silver 3 Bronze
-    register_date DATE,
-    high_score INT,
-    game_played INT
+    user_name VARCHAR(50) UNIQUE NOT NULL,
+    user_password VARCHAR(50) NOT NULL,
+    high_score INT NOT NULL DEFAULT 15000,
+    game_played INT NOT NULL DEFAULT 0,
+    register_date DATE NOT NULL DEFAULT (CURRENT_DATE)
 )
 
