@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}LOGIN{% endblock %}
+{% block content %}
+    <div id="top_row">
+        <div id="login_div">
+            <p>LOGIN</p>
+            <form action="{{url_for('home_page')}}" method="POST">
+                <label for="username_login">Username:</label><br>
+                <input type="text" id="username_login" name="username_login"><br><br>
+
+                <label for="password_login">Password:</label><br>
+                <input type="password" id="password_login" name="password_login"><br><br>
+
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
+        <div id="register_div">
+            <p>REGISTER</p>
+            <form action="{{url_for('home_page')}}" method="POST">
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username"><br><br>
+
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password"><br><br>
+
+                <label for="password2">Password Again:</label><br>
+                <input type="password" id="password2" name="password2"><br><br>
+
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
+    <div id="remove_div">
+        <p>DELETE ME</p>
+        <form action="{{url_for('home_page')}}" method="POST">
+            <label for="username_delete">Username:</label><br>
+            <input type="text" id="username_delete" name="username_delete"><br><br>
+
+            <label for="password_delete">Password:</label><br>
+            <input type="password" id="password_delete" name="password_delete"><br><br>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+{% endblock %}

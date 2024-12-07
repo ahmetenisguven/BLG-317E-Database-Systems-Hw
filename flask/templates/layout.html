@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Olimpiadle - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css_file.css"/>
+  </head>
+  <body>
+
+
+    <header>
+      <h1>OLIMPIADLE</h1>
+      <nav>
+        <ul>
+          <li><a href="/">Login Page</a></li>
+          <li><a href="/tables">See Tables</a></li>
+          <li><a href="/game">Play</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+
+  </body>
+</html>

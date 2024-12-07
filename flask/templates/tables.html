@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}TABLES{% endblock %}
+{% block content %}
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <table>
+      <tr>
+        <th>Username</th>
+        <th>High Score</th>
+        <th>Game Played</th>
+      </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{user['user_name']}}</td>
+                <td>{{user['high_score']}}</td>
+                <td>{{user['game_played']}}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+{% endblock %}

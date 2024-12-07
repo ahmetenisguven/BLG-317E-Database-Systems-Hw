@@ -1,0 +1,100 @@
+* {
+    font-family: sans-serif;
+    text-align: center;
+    color: black;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.flashes {
+    list-style: none;
+    padding: 0;
+}
+
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.flash.success {
+    background-color: #d4edda;
+    color: #155714;
+}
+
+.flash.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    gap: 15px;
+}
+
+nav ul li {
+    margin-right: 15px;
+}
+
+header {
+    display: flex;
+    border: solid black;
+    justify-content: space-between;
+}
+
+header h1 {
+    margin-left: 10px;
+}
+
+#top_row {
+    display: flex;
+}
+
+#login_div {
+    background-color: lightgreen;
+    padding: 10px;
+    width: 50%;
+
+}
+
+#register_div {
+    background-color: lightblue;
+    padding: 10px;
+    width: 50%;
+}
+
+#goto_tables {
+    margin: 10px;
+}
+a {
+    text-decoration: none;
+}
+
+#remove_div {
+    background-color: #FFCCCB;
+    padding: 10px;
+}
+#error {
+    background-color: red;
+    font-size: 100px;
+}
