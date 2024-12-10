@@ -3,6 +3,7 @@ import mysql.connector
 from mysql.connector import Error
 from operator import itemgetter
 from types import NoneType
+import random
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -135,18 +136,51 @@ def tables_page():
 
 
 @app.route('/game')
-def game_page(username="LOGIN REQUIRED"):
+def game_page(username="Guest"):
+    connection = get_db_connection()
+    if connection is None:
+        flash("Couldn't connect to the database!", "danger")
+        return render_template("game.html", username=username)
+
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("select count(code) from athletes")
+    athlete_count = cursor.fetchone()
+    athlete_count = athlete_count.get('count(code)')
+
+    select_random = random.randint(0, athlete_count - 1)
+
+    cursor.execute(
+        "SELECT a.name_tv AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR '; '), 'No Team') AS teams_name FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code GROUP BY a.name_tv, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1;",
+        (select_random,))
+    selected_athlete = cursor.fetchone()
+
+    name = selected_athlete.get('athlete_name')
+    gender = selected_athlete.get('gender')
+    country = selected_athlete.get('country_long')
+    discipline = selected_athlete.get('sport')
+    age = int(selected_athlete.get('age'))
+    teams = parse_string(selected_athlete.get('teams_name'))
+
+    print(name, gender, country, discipline, age, teams)
+
+    cursor.close()
+    connection.close()
     return render_template("game.html", username=username)
 
 
-def get_db_connection():
+def parse_string(input_string):
+    if ";" in input_string:
+        return input_string.split(";")
+    return [input_string]
 
+
+def get_db_connection():
     try:
         connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="test",
-            database="project_db"
+            host="localhost",  # needs to be changed in different database storage methods
+            user="root",  # needs to be changed in different database storage methods
+            password="test",  # needs to be changed in different computers
+            database="project_db"  # needs to be changed in different computers
         )
         if connection.is_connected():
             return connection
