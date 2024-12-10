@@ -1,0 +1,10 @@
+
+*.pyc
+*.iml
+*.xml
+flask/__pycache__/views.cpython-310.pyc
+flask/.idea/olimpiadle.iml
+flask/.idea/modules.xml
+flask/.idea/misc.xml
+flask/.idea/inspectionProfiles/profiles_settings.xml
+flask/__pycache__/views.cpython-310.pyc
