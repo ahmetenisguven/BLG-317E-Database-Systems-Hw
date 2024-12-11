@@ -120,7 +120,7 @@ def tables_page():
 
     try:
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("select * from users")
+        cursor.execute("select * from users ORDER BY high_score, game_played, register_date, user_name")
         users = cursor.fetchall()
     except Error as e:
         flash(f"Query failed: {e}", "danger")
@@ -129,8 +129,6 @@ def tables_page():
         if connection.is_connected():
             cursor.close()
             connection.close()
-
-    users = sorted(users, key=itemgetter('high_score'))
 
     return render_template("tables.html", users=users)
 
@@ -149,9 +147,7 @@ def game_page(username="Guest"):
 
     select_random = random.randint(0, athlete_count - 1)
 
-    cursor.execute(
-        "SELECT a.name_tv AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR '; '), 'No Team') AS teams_name FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code GROUP BY a.name_tv, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1;",
-        (select_random,))
+    cursor.execute("SELECT a.name AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR '; '),'No Team') AS teams_name, IFNULL(GROUP_CONCAT(m.medal_type SEPARATOR '; '),'No Medals') AS medals FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code LEFT JOIN medals m ON a.code = m.athletes_code GROUP BY a.name, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1", (select_random,))
     selected_athlete = cursor.fetchone()
 
     name = selected_athlete.get('athlete_name')
@@ -160,8 +156,9 @@ def game_page(username="Guest"):
     discipline = selected_athlete.get('sport')
     age = int(selected_athlete.get('age'))
     teams = parse_string(selected_athlete.get('teams_name'))
+    medals = parse_string(selected_athlete.get('medals'))
 
-    print(name, gender, country, discipline, age, teams)
+    print(name, gender, country, discipline, age, teams, medals)
 
     cursor.close()
     connection.close()
