@@ -177,7 +177,8 @@ def get_db_connection():
             host="localhost",  # needs to be changed in different database storage methods
             user="root",  # needs to be changed in different database storage methods
             password="test",  # needs to be changed in different computers
-            database="project_db"  # needs to be changed in different computers
+            database="project_db",  # needs to be changed in different computers
+            auth_plugin = 'mysql_native_password'
         )
         if connection.is_connected():
             return connection
