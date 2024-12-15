@@ -1,5 +1,12 @@
+# Ignore PyCharm project files
+flask/.idea/
 
+# Ignore Python cache files
+flask/__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
 *.iml
 *.xml
 flask/__pycache__/views.cpython-310.pyc
