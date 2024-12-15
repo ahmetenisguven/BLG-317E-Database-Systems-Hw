@@ -55,7 +55,7 @@ def home_page():
                 cursor.execute("INSERT INTO users(user_name, user_password) VALUES(%s,%s)", (user_name, password))
                 connection.commit()
                 flash("Registered Successfully", "success")
-                return redirect(url_for('game_page'))
+                return game_page(user_name)
             except Error:
                 flash(f"Same Username exists!", "danger")
             finally:
@@ -155,6 +155,7 @@ def tables_page():
 @app.route('/tables/<table_name>')
 def table_page(table_name):
     connection = get_db_connection()
+
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
         return render_template("table.html", table_name=table_name, columns=[], rows=[])

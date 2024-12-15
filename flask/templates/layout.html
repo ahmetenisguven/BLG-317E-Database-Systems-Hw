@@ -14,10 +14,10 @@
           <li><a href="/">Login Page</a></li>
           <!-- See Tables with Dropdown -->
           <li class="dropdown">
-            <a href="/tables">See Tables</a>
+            <a href="/tables" target="_blank">See Tables</a>
             <div class="dropdown-content">
               {% for table in tables %}
-                <a href="/tables/{{ table }}">{{ table }}</a>
+                <a href="/tables/{{ table }}" target="_blank">{{ table }}</a>
               {% endfor %}
             </div>
           </li>
@@ -25,9 +25,6 @@
         </ul>
       </nav>
     </header>
-
-    <!-- Debug: Print tables to ensure they are fetched correctly -->
-    <p>Available Tables: {{ tables }}</p>
 
     {% block content %}{% endblock %}
 
