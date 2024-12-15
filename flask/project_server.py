@@ -221,9 +221,9 @@ def get_db_connection():
     try:
         connection = mysql.connector.connect(
             host="localhost",  # needs to be changed in different database storage methods
-            user="enis",  # needs to be changed in different database storage methods
-            password="agathachr2004.",  # needs to be changed in different computers
-            database="olympics"  # needs to be changed in different computers
+            user="root",  # needs to be changed in different database storage methods
+            password="test",  # needs to be changed in different computers
+            database="project_db"  # needs to be changed in different computers
         )
         if connection.is_connected():
             return connection
