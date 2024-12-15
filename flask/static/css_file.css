@@ -132,57 +132,72 @@ select {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-/* Dropdown menu to see tables */
 nav ul li.dropdown {
     position: relative;
     display: inline-block;
+
 }
-nav ul li .dropdown-content {
+
+nav ul li .dropdown-menu {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    width: 150px;
     border-radius: 5px;
+    width: 150px;
+    right: 0; /* Start the dropdown at the right of the toggle button */
+    top: 100%; /* Position the dropdown just below the toggle button */
+    transform-origin: top right; /* Ensures it expands left */
 }
-nav ul li .dropdown-content a {
+
+nav ul li .dropdown-menu a {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    
 }
-nav ul li .dropdown-content a:hover {
+
+nav ul li .dropdown-menu a:hover {
     background-color: #ddd;
-}
-nav ul li.dropdown:hover .dropdown-content {
-    display: block;
-}
-nav ul li:hover .dropdown {
-    display: block;
+    right: 0; /* Start the dropdown at the right of the toggle button */
+    top: 100%; /* Position the dropdown just below the toggle button */
+    transform-origin: top right;
+
 }
 
-.dropdown {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    margin-top: 5px;
-    width: 150px;
-    border-radius: 5px;
-}
-
-.dropdown a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
+nav ul li.dropdown:hover .dropdown-menu {
     display: block;
+    right: 0; /* Start the dropdown at the right of the toggle button */
+    top: 100%; /* Position the dropdown just below the toggle button */
+    transform-origin: top right;
 }
 
-.dropdown a:hover {
-    background-color: #ddd;
+nav ul li .dropdown-toggle {
+    padding: 0; 
+    font-size: 24px; 
+    color: black; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    height: 100%; 
+    
 }
+
+nav ul li .dropdown-toggle span {
+    cursor: pointer; 
+    
+}
+
+.material-symbols-outlined {
+    font-size: 30px; 
+    line-height: 0; 
+    margin: 0; 
+    vertical-align: middle;  
+
+}
+
 ul.tables-table-list li{
     list-style-type: none;
 }
