@@ -7,20 +7,29 @@
   </head>
   <body>
 
-
     <header>
       <h1>OLIMPIADLE</h1>
       <nav>
         <ul>
           <li><a href="/">Login Page</a></li>
-          <li><a href="/tables">See Tables</a></li>
+          <!-- See Tables with Dropdown -->
+          <li class="dropdown">
+            <a href="/tables">See Tables</a>
+            <div class="dropdown-content">
+              {% for table in tables %}
+                <a href="/tables/{{ table }}">{{ table }}</a>
+              {% endfor %}
+            </div>
+          </li>
           <li><a href="/game">Play</a></li>
         </ul>
       </nav>
     </header>
 
-    {% block content %}{% endblock %}
+    <!-- Debug: Print tables to ensure they are fetched correctly -->
+    <p>Available Tables: {{ tables }}</p>
 
+    {% block content %}{% endblock %}
 
   </body>
 </html>

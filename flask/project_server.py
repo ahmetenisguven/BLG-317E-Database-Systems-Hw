@@ -8,6 +8,26 @@ import random
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+@app.context_processor
+def inject_tables():
+    """Injects all table names into the context for the layout."""
+    connection = get_db_connection()  # Get a database connection
+    tables = []  # Default empty list for table names
+
+    if connection:  # If the connection is successful
+        try:
+            cursor = connection.cursor()  # Create a cursor
+            cursor.execute("SHOW TABLES;")  # Query to get all table names
+            # Convert rows to table names
+            tables = [row[0] for row in cursor.fetchall()]  # Modify the index to 0 for table names
+            cursor.close()  # Close the cursor manually
+        except Exception as e:
+            print(f"Error fetching tables: {e}")  # Log error if query fails
+        finally:
+            connection.close()  # Close the database connection
+
+    return {'tables': tables}  # This will inject 'tables' into every template
+
 
 @app.route('/', methods=('GET', 'POST'))
 def home_page():
@@ -116,21 +136,47 @@ def tables_page():
     connection = get_db_connection()
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
-        return render_template("tables.html", users=[])
+        return render_template("tables.html", tables=[])
 
     try:
-        cursor = connection.cursor(dictionary=True)
-        cursor.execute("select * from users ORDER BY high_score, game_played, register_date, user_name")
-        users = cursor.fetchall()
+        cursor = connection.cursor()
+        cursor.execute("SHOW TABLES")
+        tables = [table[0] for table in cursor.fetchall()]
     except Error as e:
         flash(f"Query failed: {e}", "danger")
-        users = []
+        tables = []
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
 
-    return render_template("tables.html", users=users)
+    return render_template("tables.html", tables=tables)
+
+@app.route('/tables/<table_name>')
+def table_page(table_name):
+    connection = get_db_connection()
+    if connection is None:
+        flash("Couldn't connect to the database!", "danger")
+        return render_template("table.html", table_name=table_name, columns=[], rows=[])
+
+    try:
+        cursor = connection.cursor(dictionary=True)  # Use dictionary cursor for better readability
+        cursor.execute(f"DESCRIBE {table_name}")  # Get column names
+        columns = [column['Field'] for column in cursor.fetchall()]  # Get column names from the result
+        
+        cursor.execute(f"SELECT * FROM {table_name}")  # Get all rows from the table
+        rows = cursor.fetchall()  # Fetch all rows
+        
+    except Error as e:
+        flash(f"Query failed: {e}", "danger")
+        columns = []
+        rows = []
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+    return render_template("table.html", table_name=table_name, columns=columns, rows=rows)
 
 
 @app.route('/game')

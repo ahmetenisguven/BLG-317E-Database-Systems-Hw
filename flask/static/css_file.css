@@ -60,6 +60,7 @@ header {
     display: flex;
     border: solid black;
     justify-content: space-between;
+    padding: 10px;
 }
 
 header h1 {
@@ -97,4 +98,93 @@ a {
 #error {
     background-color: red;
     font-size: 100px;
+}
+/* Dropdown menu to see tables */
+nav ul li.dropdown {
+    position: relative;
+    display: inline-block;
+}
+nav ul li .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: 150px;
+    border-radius: 5px;
+}
+nav ul li .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+nav ul li .dropdown-content a:hover {
+    background-color: #ddd;
+}
+nav ul li.dropdown:hover .dropdown-content {
+    display: block;
+}
+nav ul li:hover .dropdown {
+    display: block;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    margin-top: 5px;
+    width: 150px;
+    border-radius: 5px;
+}
+
+.dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {
+    background-color: #ddd;
+}
+ul.tables-table-list li{
+    list-style-type: none;
+}
+ul.tables-table-list li a{
+    font-size: 25px;
+    display: block;
+    padding: 5px;
+    transition: background-color 0.3s ease; 
+}
+
+ul.tables-table-list li a:hover {
+    background-color: #f0f0f0; 
+    cursor: pointer; /* Changes cursor to a pointer to indicate interactivity */
+}
+
+/* Back Button Styles */
+a.back-button {
+    font-size: 18px;
+    padding: 10px;
+    text-decoration: none;
+    color: #007BFF;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    position: fixed;  /* Fixed position so it stays on the screen */
+    top: 10px;        /* Start 80px from the top */
+    left: 10px;       /* Position it to the left */
+    z-index: 1000;    /* Ensure it's above other content */
+    background-color: white;
+    /*transition: top 3.4s ease;  Smooth transition when position changes */
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Hover effect */
+a.back-button:hover {
+    background-color: #f0f0f0;
+    color: #0056b3;
 }

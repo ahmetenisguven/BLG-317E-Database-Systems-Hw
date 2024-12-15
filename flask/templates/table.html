@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}{{ table_name }} Table{% endblock %}
+
+{% block content %}
+    <!-- Back Button -->
+    <a href="/tables" class="back-button">&#8592; Back to Tables</a>
+    <h2>Contents of Table: {{ table_name }}</h2>
+    
+    {% if rows %}
+        <table>
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for column in columns %}
+                            <td>{{ row[column] }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No data available in this table.</p>
+    {% endif %}
+    <script>
+        // When the page scrolls, check the position and adjust the back button
+        window.onscroll = function() { handleScroll() };
+    
+        function handleScroll() {
+            var backButton = document.querySelector('.back-button');
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                backButton.style.opacity = 1;  // Fully visible
+                backButton.style.visibility = 'visible'; 
+            } else {
+                backButton.style.opacity = 0;  // Fully visible
+                backButton.style.visibility = 'hidden'; 
+            }
+        }
+    </script>
+    
+{% endblock %}
