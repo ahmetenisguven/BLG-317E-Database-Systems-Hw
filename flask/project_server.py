@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-import mysql.connector
+import mysql
 from mysql.connector import Error
 from operator import itemgetter
 from types import NoneType
@@ -29,7 +29,7 @@ def inject_tables():
     return {'tables': tables}  # This will inject 'tables' into every template
 
 
-@app.route('/', methods=('GET', 'POST'))
+@app.route('/login', methods=('GET', 'POST'))
 def home_page():
     if request.method == 'POST':
         if 'username' in request.form and 'password' in request.form and 'password2' in request.form:
@@ -179,8 +179,7 @@ def table_page(table_name):
 
     return render_template("table.html", table_name=table_name, columns=columns, rows=rows)
 
-
-@app.route('/game')
+@app.route('/')
 def game_page(username="Guest"):
     connection = get_db_connection()
     if connection is None:
@@ -222,10 +221,9 @@ def get_db_connection():
     try:
         connection = mysql.connector.connect(
             host="localhost",  # needs to be changed in different database storage methods
-            user="root",  # needs to be changed in different database storage methods
-            password="test",  # needs to be changed in different computers
-            database="project_db",  # needs to be changed in different computers
-            auth_plugin = 'mysql_native_password'
+            user="enis",  # needs to be changed in different database storage methods
+            password="agathachr2004.",  # needs to be changed in different computers
+            database="olympics"  # needs to be changed in different computers
         )
         if connection.is_connected():
             return connection

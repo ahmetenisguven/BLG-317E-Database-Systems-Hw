@@ -1,17 +1,30 @@
-{% extends "layout.html" %}
-{% block title %}GAME{% endblock %}
-{% block content %}
-    <h1 id="current_display">Current User: {{ username }}</h1>
+{% extends "layout.html" %} {% block title %}GAME{% endblock %} {% block content
+%}
+<div class="main_game">
+  <p class="gamename">OLYMPIADLE</p>
+</div>
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul class="flashes">
-                {% for category, message in messages %}
-                    <li class="flash {{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+<h1 class="username" id="current_display">Current User: {{ username }}</h1>
 
+<div class="container mt-5">
+  <div class="select-wrapper">
+    <input
+      type="text"
+      id="searchInput"
+      class="form-control"
+      placeholder="Search..."
+    />
+    <div class="dropdown-options" id="dropdownOptions">
+      <!-- Options will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
 
-{% endblock %}
+{% with messages = get_flashed_messages(with_categories=True) %} {% if messages
+%}
+<ul class="flashes">
+  {% for category, message in messages %}
+  <li class="flash {{ category }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %} {% endwith %} {% endblock %}
