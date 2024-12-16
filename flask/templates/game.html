@@ -8,23 +8,38 @@
 
 <div class="container mt-5">
   <div class="select-wrapper">
-    <input
-      type="text"
-      id="searchInput"
-      class="form-control"
-      placeholder="Search..."
-    />
-    <div class="dropdown-options" id="dropdownOptions">
-      <!-- Options will be dynamically inserted here -->
+    
+    <div class="username" id="">
+
+      <form action="{{ url_for('game_page') }}" method="POST">
+        <label for="DataList" class="form">SELECT AN ATHLETE</label><br>
+        <input class="form-control" list="datalistOptions" id="DataList" placeholder="TYPE TO SEARCH..." name="athlete_name">
+        <datalist id="datalistOptions">
+          {% for athlete in athletes_list %}
+            <option value="{{ athlete }}">
+          {% endfor %}
+        </datalist>
+      </form>
+
     </div>
+
+    
   </div>
 </div>
 
-{% with messages = get_flashed_messages(with_categories=True) %} {% if messages
-%}
-<ul class="flashes">
-  {% for category, message in messages %}
-  <li class="flash {{ category }}">{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %} {% endwith %} {% endblock %}
+{% for guess in guesses_list | reverse %}
+  <div class="username" id="" style="font-size: 10px;">
+    <h1>{{ guess }}</h1>
+  </div>
+{% endfor %}
+
+<div class="flash_wrapper">
+  {% with messages = get_flashed_messages(with_categories=True) %} {% if messages
+  %}
+  <ul class="flashes">
+    {% for category, message in messages %}
+    <li class="flash {{ category }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %} {% endwith %} {% endblock %}
+</div>

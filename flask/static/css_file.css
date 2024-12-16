@@ -236,3 +236,33 @@ a.back-button:hover {
     background-color: #f0f0f0;
     color: #0056b3;
 }
+
+.flash_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flashes {
+    text-align: center;
+    list-style: none;
+    padding: 0;
+    width: 50%;
+}
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.flash.success {
+    background-color: #d4edda;
+    color: #155714;
+}
+.flash.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.flash.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}

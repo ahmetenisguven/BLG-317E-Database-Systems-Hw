@@ -4,6 +4,7 @@ from mysql.connector import Error
 from operator import itemgetter
 from types import NoneType
 import random
+from flask import session
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -38,23 +39,24 @@ def home_page():
             password2 = request.form['password2']
 
             if not user_name or not password or not password2:
-                flash("There cannot be empty values", "warning")
+                flash("There cannot be empty values.", "warning")
                 return render_template("index.html")
 
             if password != password2:
-                flash("Two password must be same", "warning")
+                flash("Two passwords must be same.", "warning")
                 return render_template("index.html")
 
             connection = get_db_connection()
 
             if connection is None:
-                flash("Connection Failed", "danger")
+                flash("Connection Failed.", "danger")
                 return render_template("index.html")
             try:
                 cursor = connection.cursor(dictionary=True)
                 cursor.execute("INSERT INTO users(user_name, user_password) VALUES(%s,%s)", (user_name, password))
                 connection.commit()
-                flash("Registered Successfully", "success")
+                flash("Registered Successfully.", "success")
+                app.secret_key = user_name 
                 return game_page(user_name)
             except Error:
                 flash(f"Same Username exists!", "danger")
@@ -70,7 +72,7 @@ def home_page():
 
             connection = get_db_connection()
             if connection is None:
-                flash("Connection Failed", "danger")
+                flash("Connection Failed.", "danger")
                 return render_template("index.html")
 
             cursor = connection.cursor(dictionary=True)
@@ -79,13 +81,13 @@ def home_page():
             print(the_user)
 
             if type(the_user) is NoneType:
-                flash("Username does not exist", "warning")
+                flash("Username does not exist.", "warning")
                 cursor.close()
                 connection.close()
                 return render_template("index.html")
 
             if the_user.get('user_password') != password:
-                flash("Wrong Password", "warning")
+                flash("Wrong Password.", "warning")
                 cursor.close()
                 connection.close()
                 return render_template("index.html")
@@ -103,7 +105,7 @@ def home_page():
             print(user_name, password)
 
             if not user_name or not password:
-                flash("There cannot be empty values", "warning")
+                flash("There cannot be empty values.", "warning")
                 return render_template("index.html")
 
             connection = get_db_connection()
@@ -113,18 +115,20 @@ def home_page():
             print(the_user)
 
             if type(the_user) is NoneType:
-                flash("Username does not exist", "warning")
+                flash("Username does not exist.", "warning")
                 cursor.close()
                 connection.close()
                 return render_template("index.html")
 
             if the_user.get('user_password') != password:
-                flash("Wrong Password", "warning")
+                flash("Wrong Password.", "warning")
                 cursor.close()
                 connection.close()
                 return render_template("index.html")
             cursor.close()
             connection.close()
+
+            app.secret_key = user_name 
 
             return game_page(user_name)
 
@@ -179,22 +183,39 @@ def table_page(table_name):
 
     return render_template("table.html", table_name=table_name, columns=columns, rows=rows)
 
-@app.route('/')
-def game_page(username="Guest"):
+
+@app.route('/', methods=('GET', 'POST'))
+def game_page(username="Guest", selected_athlete="NotSelected"):
+    
+    if username != "Guest":
+        session['guesses_list'] = []
+        session['selected_athlete'] = None
+        session['user_name'] = username
+
+    if 'user_name' in session:
+        username = session['user_name']
+
+
     connection = get_db_connection()
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
         return render_template("game.html", username=username)
 
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("select count(code) from athletes")
-    athlete_count = cursor.fetchone()
-    athlete_count = athlete_count.get('count(code)')
 
-    select_random = random.randint(0, athlete_count - 1)
+    if 'selected_athlete' not in session or session['selected_athlete'] is None:
+        cursor.execute("select count(code) from athletes")
+        athlete_count = cursor.fetchone()
+        athlete_count = athlete_count.get('count(code)')
 
-    cursor.execute("SELECT a.name AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR '; '),'No Team') AS teams_name, IFNULL(GROUP_CONCAT(m.medal_type SEPARATOR '; '),'No Medals') AS medals FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code LEFT JOIN medals m ON a.code = m.athletes_code GROUP BY a.name, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1", (select_random,))
-    selected_athlete = cursor.fetchone()
+        select_random = random.randint(0, athlete_count - 1)
+
+        cursor.execute("SELECT a.name AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR '; '),'No Team') AS teams_name, IFNULL(GROUP_CONCAT(m.medal_type SEPARATOR '; '),'No Medals') AS medals FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code LEFT JOIN medals m ON a.code = m.athletes_code GROUP BY a.name, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1", (select_random,))
+        selected_athlete = cursor.fetchone()
+        session['selected_athlete'] = selected_athlete
+    else:
+        selected_athlete = session['selected_athlete']
+    
 
     name = selected_athlete.get('athlete_name')
     gender = selected_athlete.get('gender')
@@ -206,9 +227,32 @@ def game_page(username="Guest"):
 
     print(name, gender, country, discipline, age, teams, medals)
 
+    cursor.execute("SELECT name FROM athletes ORDER BY name")
+    athletes_dict = cursor.fetchall()
+    athletes_list = [athletes_dict[i].get('name') for i in range(len(athletes_dict))]
+
+    if 'guesses_list' not in session:
+        session['guesses_list'] = []
+    
+    if request.method == 'POST':
+        if 'athlete_name' in request.form:
+            user_selected_athlete_name = request.form['athlete_name']
+
+            if user_selected_athlete_name not in athletes_list:
+                flash("This athlete does not exists in the database!", "warning")
+            else:    
+                if user_selected_athlete_name not in session['guesses_list']:
+                    session['guesses_list'].append(user_selected_athlete_name)
+                    session.modified = True
+                    print(session['guesses_list'])
+                else:
+                    flash("You've already guessed this athlete!", "warning")
+
+            return render_template("game.html", username=username, athletes_list=athletes_list, guesses_list=session['guesses_list'])
+
     cursor.close()
     connection.close()
-    return render_template("game.html", username=username)
+    return render_template("game.html", username=username, athletes_list=athletes_list, guesses_list=session['guesses_list'])
 
 
 def parse_string(input_string):
