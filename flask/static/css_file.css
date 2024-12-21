@@ -266,3 +266,43 @@ a.back-button:hover {
     background-color: #fff3cd;
     color: #856404;
 }
+
+.guesses {
+    margin-top: 20px;
+}
+
+.guesses table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.guesses th, .guesses td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.guesses th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.guesses tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.guesses tr:hover {
+    background-color: #f1f1f1;
+}
+
+.color-green {
+    background-color: green;
+}
+
+.color-yellow {
+    background-color: yellow;
+}
+
+.color-gray {
+    background-color: gray;
+}

@@ -68,7 +68,6 @@ def home_page():
         elif 'username_delete' in request.form and 'password_delete' in request.form:
             user_name = request.form['username_delete']
             password = request.form['password_delete']
-            print(user_name, password)
 
             connection = get_db_connection()
             if connection is None:
@@ -78,7 +77,6 @@ def home_page():
             cursor = connection.cursor(dictionary=True)
             cursor.execute("SELECT * FROM users WHERE user_name=%s;", (user_name,))
             the_user = cursor.fetchone()
-            print(the_user)
 
             if type(the_user) is NoneType:
                 flash("Username does not exist.", "warning")
@@ -94,6 +92,7 @@ def home_page():
 
             cursor.execute("DELETE FROM users WHERE user_name=%s", (user_name,))
             connection.commit()
+            session.clear()
             cursor.close()
             connection.close()
 
@@ -102,7 +101,6 @@ def home_page():
         elif 'username_login' in request.form and 'password_login' in request.form:
             user_name = request.form['username_login']
             password = request.form['password_login']
-            print(user_name, password)
 
             if not user_name or not password:
                 flash("There cannot be empty values.", "warning")
@@ -112,7 +110,6 @@ def home_page():
             cursor = connection.cursor(dictionary=True)
             cursor.execute("SELECT * FROM users WHERE user_name=%s;", (user_name,))
             the_user = cursor.fetchone()
-            print(the_user)
 
             if type(the_user) is NoneType:
                 flash("Username does not exist.", "warning")
@@ -191,6 +188,7 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
         session['guesses_list'] = []
         session['selected_athlete'] = None
         session['user_name'] = username
+        session['game_over'] = False
 
     if 'user_name' in session:
         username = session['user_name']
@@ -210,7 +208,7 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
 
         select_random = random.randint(0, athlete_count - 1)
 
-        cursor.execute("SELECT a.name AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR '; '),'No Team') AS teams_name, IFNULL(GROUP_CONCAT(m.medal_type SEPARATOR '; '),'No Medals') AS medals FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code LEFT JOIN medals m ON a.code = m.athletes_code GROUP BY a.name, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1", (select_random,))
+        cursor.execute("SELECT a.name AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR ', '),'No Team') AS teams_name, IFNULL(GROUP_CONCAT(m.medal_type SEPARATOR ', '),'No Medals') AS medals FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code LEFT JOIN medals m ON a.code = m.athletes_code GROUP BY a.name, a.gender, c.country_long, a.birth_date, s.sport LIMIT %s, 1", (select_random,))
         selected_athlete = cursor.fetchone()
         session['selected_athlete'] = selected_athlete
     else:
@@ -222,8 +220,9 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
     country = selected_athlete.get('country_long')
     discipline = selected_athlete.get('sport')
     age = int(selected_athlete.get('age'))
-    teams = parse_string(selected_athlete.get('teams_name'))
-    medals = parse_string(selected_athlete.get('medals'))
+    teams = sorted(parse_string(selected_athlete.get('teams_name')))
+    medals = sorted(parse_string(selected_athlete.get('medals')))
+
 
     print(name, gender, country, discipline, age, teams, medals)
 
@@ -238,16 +237,90 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
         if 'athlete_name' in request.form:
             user_selected_athlete_name = request.form['athlete_name']
 
-            if user_selected_athlete_name not in athletes_list:
-                flash("This athlete does not exists in the database!", "warning")
-            else:    
-                if user_selected_athlete_name not in session['guesses_list']:
-                    session['guesses_list'].append(user_selected_athlete_name)
-                    session.modified = True
-                    print(session['guesses_list'])
-                else:
-                    flash("You've already guessed this athlete!", "warning")
+            if session.get('game_over'):
+                flash("The game is over! Login/Register to play again.", "warning")
+            else:
 
+                if user_selected_athlete_name not in athletes_list:
+                    flash("This athlete does not exists in the database!", "warning")
+                else:    
+                    if any(user_selected_athlete_name in d.values() for d in session['guesses_list']):
+                        flash("You've already guessed this athlete!", "warning")
+                    else:
+                        cursor.execute("SELECT a.name AS athlete_name, a.gender, c.country_long, s.sport, TIMESTAMPDIFF(YEAR, a.birth_date, CURDATE()) AS age, IFNULL(GROUP_CONCAT(DISTINCT CONCAT(t.team, ' ', s.sport, ' ', IFNULL(t.events, ''), ' Team') SEPARATOR ', '),'No Team') AS teams_name, IFNULL(GROUP_CONCAT(m.medal_type SEPARATOR ', '),'No Medals') AS medals FROM athletes a LEFT JOIN countries c ON a.country_code = c.country_code LEFT JOIN sports s ON a.sport = s.sport LEFT JOIN teams_member tm ON a.code = tm.athletes_code LEFT JOIN teams t ON tm.teams_code = t.code LEFT JOIN medals m ON a.code = m.athletes_code WHERE a.name = %s GROUP BY a.name, a.gender, c.country_long, a.birth_date, s.sport", (user_selected_athlete_name,))
+                        user_selected_athlete_dict = cursor.fetchone()
+
+                        session['green_count'] = 0
+
+                        if user_selected_athlete_dict['athlete_name'] == name:
+                            user_selected_athlete_dict['athlete_name_color'] = "green"
+                            session['green_count'] += 1
+                        else:
+                            user_selected_athlete_dict['athlete_name_color'] = "gray"
+
+                        if user_selected_athlete_dict['gender'] == gender:
+                            user_selected_athlete_dict['gender_color'] = "green"
+                            session['green_count'] += 1
+                        else:
+                            user_selected_athlete_dict['gender_color'] = "gray"
+
+                        if user_selected_athlete_dict['country_long'] == country:
+                            user_selected_athlete_dict['country_long_color'] = "green"
+                            session['green_count'] += 1
+                        else:
+                            user_selected_athlete_dict['country_long_color'] = "gray"
+
+                        if user_selected_athlete_dict['sport'] == discipline:
+                            user_selected_athlete_dict['sport_color'] = "green"
+                            session['green_count'] += 1
+                        else:
+                            user_selected_athlete_dict['sport_color'] = "gray"
+
+                        if user_selected_athlete_dict['age'] == age:
+                            user_selected_athlete_dict['age_color'] = "green"
+                            session['green_count'] += 1
+                        elif abs(user_selected_athlete_dict['age'] - age) < 4:
+                            user_selected_athlete_dict['age_color'] = "yellow"
+                        else:
+                            user_selected_athlete_dict['age_color'] = "gray"
+
+                        if sorted(parse_string(user_selected_athlete_dict['teams_name'])) == teams:
+                            user_selected_athlete_dict['teams_name_color'] = "green"
+                            session['green_count'] += 1
+                        elif any(item in sorted(parse_string(user_selected_athlete_dict['teams_name'])) for item in teams):
+                            user_selected_athlete_dict['teams_name_color'] = "yellow"
+                        else:
+                            user_selected_athlete_dict['teams_name_color'] = "gray"
+
+                        if sorted(parse_string(user_selected_athlete_dict['medals'])) == medals:
+                            user_selected_athlete_dict['medals_color'] = "green"
+                            session['green_count'] += 1
+                        elif any(item in sorted(parse_string(user_selected_athlete_dict['medals'])) for item in medals):
+                            user_selected_athlete_dict['medals_color'] = "yellow"
+                        else:
+                            user_selected_athlete_dict['medals_color'] = "gray"
+
+                        session['guesses_list'].append(user_selected_athlete_dict)
+                        session.modified = True
+
+                        if session['green_count'] == 7:
+                            flash("Congratulations! You won the game!", "success")
+                            session['game_over'] = True
+
+                            if username != "Guest":
+                                cursor.execute("UPDATE users SET game_played = game_played+1 WHERE user_name = %s", (session['user_name'],))
+                                connection.commit()
+
+                                cursor.execute("SELECT high_score FROM users WHERE user_name = %s", (session['user_name'],))
+                                get_prev_high_score = cursor.fetchone()
+
+                                if get_prev_high_score['high_score'] > len(session['guesses_list']):
+                                    cursor.execute("UPDATE users SET high_score = %s WHERE user_name = %s", (len(session['guesses_list']), session['user_name']))
+                                    connection.commit()
+                
+                    
+            cursor.close()
+            connection.close()
             return render_template("game.html", username=username, athletes_list=athletes_list, guesses_list=session['guesses_list'])
 
     cursor.close()
@@ -256,8 +329,8 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
 
 
 def parse_string(input_string):
-    if ";" in input_string:
-        return input_string.split(";")
+    if "," in input_string:
+        return input_string.split(",")
     return [input_string]
 
 

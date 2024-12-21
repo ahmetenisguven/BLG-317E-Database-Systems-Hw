@@ -1,5 +1,20 @@
 {% extends "layout.html" %} {% block title %}LOGIN{% endblock %} {% block
 content %}
+
+<br>
+
+<div class="flash_wrapper">
+  {% with messages = get_flashed_messages(with_categories=True) %} 
+    {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="flash {{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+</div>
+
 <div class="container my-5">
   <div class="row justify-content-center">
     <!-- LOGIN FORM -->
@@ -106,13 +121,5 @@ content %}
   </div>
 </div>
 
-<div class="flash_wrapper">
-  {% with messages = get_flashed_messages(with_categories=True) %} {% if messages
-  %}
-  <ul class="flashes">
-    {% for category, message in messages %}
-    <li class="flash {{ category }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} {% endwith %} {% endblock %}
-</div>
+
+{% endblock %}
