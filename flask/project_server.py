@@ -95,11 +95,12 @@ def home_page():
 
             cursor.execute("DELETE FROM users WHERE user_name=%s", (user_name,))
             connection.commit()
+            flash("Deleted Successfully.", "success")
             session.clear()
             cursor.close()
             connection.close()
 
-            return redirect(url_for('home_page'))
+            return render_template("index.html")
 
         elif 'username_login' in request.form and 'password_login' in request.form:
             user_name = request.form['username_login']
@@ -288,11 +289,27 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
         session['guesses_list'] = []
     
     if request.method == 'POST':
-        if 'athlete_name' in request.form:
+        if 'log_out' in request.form:
+            session.clear()
+            session['guesses_list'] = []
+            session['selected_athlete'] = None
+            session['user_name'] = "Guest"
+            session['game_over'] = False
+            return home_page()
+
+        elif 'reseter' in request.form:
+            session.clear()
+            session['guesses_list'] = []
+            session['selected_athlete'] = None
+            session['user_name'] = username
+            session['game_over'] = False
+            return render_template("game.html", username=username, athletes_list=athletes_list, guesses_list=session['guesses_list'])
+
+        elif 'athlete_name' in request.form:
             user_selected_athlete_name = request.form['athlete_name']
 
             if session.get('game_over'):
-                flash("The game is over! Login/Register to play again.", "warning")
+                flash("The game is over! Reset to play again.", "warning")
             else:
 
                 if user_selected_athlete_name not in athletes_list:
@@ -392,9 +409,9 @@ def get_db_connection():
     try:
         connection = mysql.connector.connect(
             host="localhost",  # needs to be changed in different database storage methods
-            user="user",  # needs to be changed in different database storage methods
-            password="password",  # needs to be changed in different computers
-            database="db"  # needs to be changed in different computers
+            user="root",  # needs to be changed in different database storage methods
+            password="test",  # needs to be changed in different computers
+            database="project_db"  # needs to be changed in different computers
         )
         if connection.is_connected():
             return connection

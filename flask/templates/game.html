@@ -7,6 +7,18 @@
 
 <h1 class="username" id="current_display">Current User: {{ username }}</h1>
 
+<form action="{{ url_for('game_page') }}" method="POST" style="display: flex; justify-content: center;">
+  <button class="form-control" name="reseter" style="width: 200px;">RESET THE GAME</button>
+</form>
+
+<br>
+
+{% if username != "Guest" %}
+<form action="{{ url_for('game_page') }}" method="POST" style="display: flex; justify-content: center;">
+  <button class="form-control" name="log_out" style="width: 200px;">Log Out</button>
+</form>
+{% endif %}
+
 <div class="container mt-5">
   <div class="select-wrapper">
     <div class="username" id="">
