@@ -326,6 +326,8 @@ def game_page(username="Guest", selected_athlete="NotSelected"):
                         if user_selected_athlete_dict['athlete_name'] == name:
                             user_selected_athlete_dict['athlete_name_color'] = "green"
                             session['green_count'] += 1
+                        elif any(item in sorted(user_selected_athlete_dict['athlete_name'].split()) for item in sorted(name.split())):
+                            user_selected_athlete_dict['athlete_name_color'] = "yellow"
                         else:
                             user_selected_athlete_dict['athlete_name_color'] = "gray"
 
