@@ -1,55 +1,52 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %} {{ table_name }} Table {% endblock
+%} {% block content %}
+<!-- Back Button -->
+<a href="/tables" class="back-button">&#8592; Back to Tables</a>
+<h2 class="gamename">{{ table_name }}</h2>
 
-{% block title %}
-    {{ table_name }} Table
-{% endblock %}
+{% if rows %}
+<div class="table-responsive">
+  <table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        {% for mapped_column in mapped_columns %}
+        <th>{{ mapped_column }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        {% for column in columns %}
+        <td>{{ row[column] }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="alert alert-warning">No data available in this table.</p>
+{% endif %}
 
-{% block content %}
-    <!-- Back Button -->
-    <a href="/tables" class="back-button">&#8592; Back to Tables</a>
-    <h2 class="mb-4">{{ table_name }}</h2>
+<script>
+  // When the page scrolls, check the position and adjust the back button
+  window.onscroll = function () {
+    handleScroll();
+  };
 
-    {% if rows %}
-        <table class="table table-striped table-bordered table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    {% for column in columns %}
-                        <th>{{ column }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in rows %}
-                    <tr>
-                        {% for column in columns %}
-                            <td>{{ row[column] }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="alert alert-warning">No data available in this table.</p>
-    {% endif %}
-
-    <script>
-        // When the page scrolls, check the position and adjust the back button
-        window.onscroll = function () {
-            handleScroll();
-        };
-
-        function handleScroll() {
-            var backButton = document.querySelector(".back-button");
-            if (
-                document.body.scrollTop > 100 ||
-                document.documentElement.scrollTop > 100
-            ) {
-                backButton.style.opacity = 1; // Fully visible
-                backButton.style.visibility = "visible";
-            } else {
-                backButton.style.opacity = 0; // Fully visible
-                backButton.style.visibility = "hidden";
-            }
-        }
-    </script>
+  function handleScroll() {
+    var backButton = document.querySelector(".back-button");
+    if (
+      document.body.scrollTop > 100 ||
+      document.documentElement.scrollTop > 100
+    ) {
+      backButton.style.opacity = 1; // Fully visible
+      backButton.style.visibility = "visible";
+    } else {
+      backButton.style.opacity = 0; // Fully visible
+      backButton.style.visibility = "hidden";
+    }
+  }
+</script>
 {% endblock %}

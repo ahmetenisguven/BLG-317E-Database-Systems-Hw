@@ -153,6 +153,48 @@ def tables_page():
 
     return render_template("tables.html", tables=tables)
 
+column_mapping = {
+    'code' : 'Code',
+    'current_status': 'Current Status',
+    'name': 'Name',
+    'name_short': 'Name Shorted',
+    'name_tv': 'Name on TV',
+    'gender': 'Gender',
+    'job_title': 'Job',
+    'country_code' : 'Country Code',	
+    'height_' : 'Height', 	
+    'weight_' : 'Weight',	
+    'sport'   : 'Sport',	
+    'events'  : 'Events Participated',	
+    'birth_date' : 'Birth Date',	
+    'lang': 'Languages Spoken',
+
+    'country': 'Country',
+    'country_long': 'Official Country Name',
+
+    'medal_date' :'Medal Earned Date',	
+    'medal_type' : 'Type of Medal ' ,	
+    'athletes_code' : 'Team of the Athlete', 	
+    'teams_code' : 'Code of the Team',
+
+    'sport_code' : 'Code of the Sport',
+    'sport_URL' : 'URL for more info',
+
+    'team' : 'Team',
+    'team_gender' : 'Gender',	
+    'country_code' : 'Country Code',
+    'num_athletes' : 'Number of Athletes', 
+    'num_coaches' : 'Number of Coaches',
+
+    'roles' : 'Assigned Role',
+    'coaches_code' : 'Code of the Coach',
+
+    'user_name' : 'Username',       	
+    'high_score' : 'Score', 	
+    'game_played' : 'Games Played',
+    'register_date' : 'Date of Registeration'
+}
+
 @app.route('/tables/<table_name>')
 def table_page(table_name):
     connection = get_db_connection()
@@ -166,6 +208,9 @@ def table_page(table_name):
         cursor.execute(f"DESCRIBE {table_name}")  # Get column names
         columns = [column['Field'] for column in cursor.fetchall()]  # Get column names from the result
         
+        # Apply the column mapping
+        mapped_columns = [column_mapping.get(col, col.replace('_', ' ').title()) for col in columns]
+
         cursor.execute(f"SELECT * FROM {table_name}")  # Get all rows from the table
         rows = cursor.fetchall()  # Fetch all rows
         
@@ -178,8 +223,7 @@ def table_page(table_name):
             cursor.close()
             connection.close()
 
-    return render_template("table.html", table_name=table_name, columns=columns, rows=rows)
-
+    return render_template("table.html", table_name=table_name, columns=columns, mapped_columns=mapped_columns, rows=rows)
 
 @app.route('/', methods=('GET', 'POST'))
 def game_page(username="Guest", selected_athlete="NotSelected"):
@@ -338,9 +382,9 @@ def get_db_connection():
     try:
         connection = mysql.connector.connect(
             host="localhost",  # needs to be changed in different database storage methods
-            user="root",  # needs to be changed in different database storage methods
-            password="test",  # needs to be changed in different computers
-            database="project_db"  # needs to be changed in different computers
+            user="user",  # needs to be changed in different database storage methods
+            password="password",  # needs to be changed in different computers
+            database="db"  # needs to be changed in different computers
         )
         if connection.is_connected():
             return connection

@@ -79,7 +79,7 @@ select {
     max-height: 200px;
     overflow-y: auto;
     display: none;
-    z-index: 10;
+    z-index: 9999;
 }
 
 .dropdown-options div {
@@ -143,7 +143,7 @@ nav ul li .dropdown-menu {
     position: absolute;
     background-color: #f1f1f1;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 9999;
     border-radius: 5px;
     width: 150px;
     right: 0; /* Start the dropdown at the right of the toggle button */
@@ -305,4 +305,73 @@ a.back-button:hover {
 
 .color-gray {
     background-color: gray;
+.selector{
+    font-family: 'Audiowide', sans-serif;
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    background: rgba(0, 0, 0, 0.5); 
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;  /* Set your desired max width */
+    width: 100%;  /* Ensures the element is responsive */
+    margin-left: auto;  /* Center the element */
+    margin-right: auto;  /* Center the element */
+}
+
+.table-responsive {
+    max-width: 100%;
+    overflow-x: auto; /* Allows horizontal scrolling */
+    overflow-y: hidden; /* Hides vertical scrollbar */
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.375rem; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a cooler look */
+}
+
+.table {
+    white-space: nowrap;
+    border-collapse: collapse; /* Removes double borders */
+    width: 100%;
+}
+
+.table thead th {
+    background-color: #343a40;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    position: sticky;
+    top: 0; /* Sticky headers */
+    z-index: 1;
+}
+
+.table td, .table th {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long text with ellipsis */
+    max-width: 200px; /* Set a reasonable max width for cells */
+}
+
+.table td:hover {
+    overflow: visible; /* Show full content on hover */
+    white-space: normal;
+    position: relative;
+    z-index: 10;
+    background-color: #f8f9fa; /* Subtle background highlight */
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Alternating row colors */
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef; /* Highlight row on hover */
 }
