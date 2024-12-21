@@ -1,4 +1,5 @@
-{% extends "layout.html" %} {% block title %}GAME{% endblock %} {% block content %}
+{% extends "layout.html" %} {% block title %}GAME{% endblock %} {% block content
+%}
 
 <div class="main_game">
   <p class="gamename">OLYMPIADLE</p>
@@ -8,19 +9,7 @@
 
 <div class="container mt-5">
   <div class="select-wrapper">
-    
     <div class="username" id="">
-      
-      <form action="{{ url_for('game_page') }}" method="POST">
-        
-        <label for="DataList" class="form">SELECT AN ATHLETE</label><br>
-        <input class="form-control" list="datalistOptions" id="DataList" placeholder="TYPE TO SEARCH..." name="athlete_name">
-        
-        <datalist id="datalistOptions">
-          {% for athlete in athletes_list %}
-          <option value="{{ athlete }}">
-            {% endfor %}
-    <div class="selector" id="">
       <form action="{{ url_for('game_page') }}" method="POST">
         <label for="DataList" class="form">SELECT AN ATHLETE</label><br />
         <input
@@ -30,38 +19,15 @@
           placeholder="TYPE TO SEARCH..."
           name="athlete_name"
         />
-        <datalist class="datalist" id="datalistOptions">
+
+        <datalist id="datalistOptions">
           {% for athlete in athletes_list %}
           <option value="{{ athlete }}">{% endfor %}</option>
         </datalist>
-      
       </form>
-        
-    </div>
-      
-      
-  </div>
-</div>
-
-<div class="flash_wrapper">
-  {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-      <ul class="flashes">
-        {% for category, message in messages %}
-        <li class="flash {{ category }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
     </div>
   </div>
 </div>
-
-{% for guess in guesses_list | reverse %}
-<div class="username" id="" style="font-size: 10px">
-  <h1>{{ guess }}</h1>
-</div>
-{% endfor %}
 
 <div class="flash_wrapper">
   {% with messages = get_flashed_messages(with_categories=True) %} {% if
@@ -71,41 +37,45 @@
     <li class="flash {{ category }}">{{ message }}</li>
     {% endfor %}
   </ul>
-  {% endif %} {% endwith %} {% endblock %}
+  {% endif %} {% endwith %}
 </div>
-
-  
 
 <div class="guesses">
   <table>
-      <thead>
-          <tr>
-              <th>Name</th>
-              <th>Gender</th>
-              <th>Country</th>
-              <th>Sport</th>
-              <th>Age</th>
-              <th>Teams</th>
-              <th>Medals</th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for guess in guesses_list | reverse %}
-          <tr>
-              <td class="color-{{ guess.athlete_name_color }}">{{ guess.athlete_name }}</td>
-              <td class="color-{{ guess.gender_color }}">{{ guess.gender }}</td>
-              <td class="color-{{ guess.country_long_color }}">{{ guess.country_long }}</td>
-              <td class="color-{{ guess.sport_color }}">{{ guess.sport }}</td>
-              <td class="color-{{ guess.age_color }}">{{ guess.age }}</td>
-              <td class="color-{{ guess.teams_name_color }}">{{ guess.teams_name }}</td>
-              <td class="color-{{ guess.medals_color }}">{{ guess.medals }}</td>
-          </tr>
-          {% endfor %}
-      </tbody>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Country</th>
+        <th>Sport</th>
+        <th>Age</th>
+        <th>Teams</th>
+        <th>Medals</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for guess in guesses_list | reverse %}
+      <tr>
+        <td class="color-{{ guess.athlete_name_color }}">
+          {{ guess.athlete_name }}
+        </td>
+        <td class="color-{{ guess.gender_color }}">{{ guess.gender }}</td>
+        <td class="color-{{ guess.country_long_color }}">
+          {{ guess.country_long }}
+        </td>
+        <td class="color-{{ guess.sport_color }}">{{ guess.sport }}</td>
+        <td class="color-{{ guess.age_color }}">{{ guess.age }}</td>
+        <td class="color-{{ guess.teams_name_color }}">
+          {{ guess.teams_name }}
+        </td>
+        <td class="color-{{ guess.medals_color }}">{{ guess.medals }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
 </div>
 
-<br>
-<br>
+<br />
+<br />
 
 {% endblock %}

@@ -14,6 +14,7 @@ def inject_tables():
     """Injects all table names into the context for the layout."""
     connection = get_db_connection()  # Get a database connection
     tables = []  # Default empty list for table names
+    mapped_table_name = [ ]
 
     if connection:  # If the connection is successful
         try:
@@ -22,12 +23,14 @@ def inject_tables():
             # Convert rows to table names
             tables = [row[0] for row in cursor.fetchall()]  # Modify the index to 0 for table names
             cursor.close()  # Close the cursor manually
+
+            mapped_table_name = [table_name_mapping.get(table, table.replace('_', ' ').title()) for table in tables]
         except Exception as e:
             print(f"Error fetching tables: {e}")  # Log error if query fails
         finally:
             connection.close()  # Close the database connection
 
-    return {'tables': tables}  # This will inject 'tables' into every template
+    return {'tables': tables, 'mapped_tables': mapped_table_name}  # This will inject 'tables' into every template
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -131,6 +134,53 @@ def home_page():
 
     return render_template("index.html")
 
+column_mapping = {
+    'code' : 'Code',
+    'current_status': 'Current Status',
+    'name': 'Name',
+    'name_short': 'Name Shorted',
+    'name_tv': 'Name on TV',
+    'gender': 'Gender',
+    'job_title': 'Job',
+    'country_code' : 'Country Code',	
+    'height_' : 'Height', 	
+    'weight_' : 'Weight',	
+    'sport'   : 'Sport',	
+    'events'  : 'Events Participated',	
+    'birth_date' : 'Birth Date',	
+    'lang': 'Languages Spoken',
+    'country': 'Country',
+    'country_long': 'Official Country Name',
+    'medal_date' :'Medal Earned Date',	
+    'medal_type' : 'Type of Medal ' ,	
+    'athletes_code' : 'Team of the Athlete', 	
+    'teams_code' : 'Code of the Team',
+    'sport_code' : 'Code of the Sport',
+    'sport_URL' : 'URL for more info',
+    'team' : 'Team',
+    'team_gender' : 'Gender',	
+    'country_code' : 'Country Code',
+    'num_athletes' : 'Number of Athletes', 
+    'num_coaches' : 'Number of Coaches',
+    'roles' : 'Assigned Role',
+    'coaches_code' : 'Code of the Coach',
+    'user_name' : 'Username',       	
+    'high_score' : 'Score', 	
+    'game_played' : 'Games Played',
+    'register_date' : 'Date of Registeration'
+}
+
+table_name_mapping = {
+    'athletes' : 'Athletes',
+    'coaches' : 'Coaches',
+    'countries' : 'Countries',
+    'medals' : 'Medals',
+    'sport' : 'Sports',
+    'teams': 'Teams',
+    'teams_member' : 'Teams & Members',
+    'users' : 'ScoreBoard'
+}
+
 
 @app.route('/tables')
 def tables_page():
@@ -153,51 +203,11 @@ def tables_page():
 
     return render_template("tables.html", tables=tables)
 
-column_mapping = {
-    'code' : 'Code',
-    'current_status': 'Current Status',
-    'name': 'Name',
-    'name_short': 'Name Shorted',
-    'name_tv': 'Name on TV',
-    'gender': 'Gender',
-    'job_title': 'Job',
-    'country_code' : 'Country Code',	
-    'height_' : 'Height', 	
-    'weight_' : 'Weight',	
-    'sport'   : 'Sport',	
-    'events'  : 'Events Participated',	
-    'birth_date' : 'Birth Date',	
-    'lang': 'Languages Spoken',
-
-    'country': 'Country',
-    'country_long': 'Official Country Name',
-
-    'medal_date' :'Medal Earned Date',	
-    'medal_type' : 'Type of Medal ' ,	
-    'athletes_code' : 'Team of the Athlete', 	
-    'teams_code' : 'Code of the Team',
-
-    'sport_code' : 'Code of the Sport',
-    'sport_URL' : 'URL for more info',
-
-    'team' : 'Team',
-    'team_gender' : 'Gender',	
-    'country_code' : 'Country Code',
-    'num_athletes' : 'Number of Athletes', 
-    'num_coaches' : 'Number of Coaches',
-
-    'roles' : 'Assigned Role',
-    'coaches_code' : 'Code of the Coach',
-
-    'user_name' : 'Username',       	
-    'high_score' : 'Score', 	
-    'game_played' : 'Games Played',
-    'register_date' : 'Date of Registeration'
-}
-
 @app.route('/tables/<table_name>')
 def table_page(table_name):
     connection = get_db_connection()
+
+    mapped_table_name = table_name_mapping.get(table_name, table_name.replace('_', ' ').title())
 
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
@@ -207,10 +217,9 @@ def table_page(table_name):
         cursor = connection.cursor(dictionary=True)  # Use dictionary cursor for better readability
         cursor.execute(f"DESCRIBE {table_name}")  # Get column names
         columns = [column['Field'] for column in cursor.fetchall()]  # Get column names from the result
-        
-        # Apply the column mapping
-        mapped_columns = [column_mapping.get(col, col.replace('_', ' ').title()) for col in columns]
 
+        mapped_columns = [column_mapping.get(col, col.replace('_', ' ').title()) for col in columns]
+        
         cursor.execute(f"SELECT * FROM {table_name}")  # Get all rows from the table
         rows = cursor.fetchall()  # Fetch all rows
         
@@ -223,7 +232,8 @@ def table_page(table_name):
             cursor.close()
             connection.close()
 
-    return render_template("table.html", table_name=table_name, columns=columns, mapped_columns=mapped_columns, rows=rows)
+    return render_template("table.html", table_name=mapped_table_name, columns=columns, mapped_columns=mapped_columns, rows=rows)
+
 
 @app.route('/', methods=('GET', 'POST'))
 def game_page(username="Guest", selected_athlete="NotSelected"):

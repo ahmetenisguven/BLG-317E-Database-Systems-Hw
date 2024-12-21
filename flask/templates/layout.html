@@ -48,8 +48,8 @@
                   <span class="material-symbols-outlined">table</span>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="tablesDropdown">
-                  {% for table in tables %}
-                    <li><a class="dropdown-item" href="/tables/{{ table }}" target="_blank">{{ table }}</a></li>
+                  {% for i in range(tables|length) %}
+                    <li><a class="dropdown-item" href="/tables/{{ tables[i] }}" target="_blank">{{ mapped_tables[i] }}</a></li>
                   {% endfor %}
                 </ul>
               </li>
