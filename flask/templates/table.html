@@ -9,8 +9,22 @@
   <table class="table table-striped table-bordered table-hover">
     <thead class="thead-dark">
       <tr>
-        {% for mapped_column in mapped_columns %}
-        <th>{{ mapped_column }}</th>
+        {% for i in range(0, columns|length) %}
+        <th>
+          {% if sort_column == columns[i] and sort_order == 'ASC' %}
+          <a href="?sort_column={{ columns[i] }}&sort_order=DESC" class="text-white">
+            {{ mapped_columns[i] }} ▼
+          </a>
+          {% elif sort_column == columns[i] and sort_order == 'DESC' %}
+          <a href="?sort_column={{ columns[i] }}&sort_order=ASC" class="text-white">
+            {{ mapped_columns[i] }} ▲
+          </a>
+          {% else %}
+          <a href="?sort_column={{ columns[i] }}&sort_order=ASC" class="text-white">
+            {{ mapped_columns[i] }}
+          </a>
+          {% endif %}
+        </th>
         {% endfor %}
       </tr>
     </thead>

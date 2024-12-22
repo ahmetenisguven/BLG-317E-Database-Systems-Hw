@@ -209,7 +209,8 @@ def table_page(table_name):
     connection = get_db_connection()
 
     mapped_table_name = table_name_mapping.get(table_name, table_name.replace('_', ' ').title())
-
+    sort_column = request.args.get('sort_column')  # Get the column to sort by
+    sort_order = request.args.get('sort_order', 'ASC')  # Get the sort order (default to ASC)
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
         return render_template("table.html", table_name=table_name, columns=[], rows=[])
@@ -220,8 +221,14 @@ def table_page(table_name):
         columns = [column['Field'] for column in cursor.fetchall()]  # Get column names from the result
 
         mapped_columns = [column_mapping.get(col, col.replace('_', ' ').title()) for col in columns]
-        
-        cursor.execute(f"SELECT * FROM {table_name}")  # Get all rows from the table
+        # Dynamic query needed to order by column names:
+        print("Columns:", columns)
+        print("Mapped Columns:", mapped_columns)
+
+        query = f"SELECT * FROM {table_name}"
+        if sort_column in columns:
+            query += f" ORDER BY {sort_column} {sort_order}"
+        cursor.execute(query)  # Get all rows from the table
         rows = cursor.fetchall()  # Fetch all rows
         
     except Error as e:
@@ -233,7 +240,7 @@ def table_page(table_name):
             cursor.close()
             connection.close()
 
-    return render_template("table.html", table_name=mapped_table_name, columns=columns, mapped_columns=mapped_columns, rows=rows)
+    return render_template("table.html", table_name=mapped_table_name, columns=columns, mapped_columns=mapped_columns, rows=rows, sort_column=sort_column, sort_order=sort_order)
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -413,7 +420,8 @@ def get_db_connection():
             host="localhost",  # needs to be changed in different database storage methods
             user="root",  # needs to be changed in different database storage methods
             password="test",  # needs to be changed in different computers
-            database="project_db"  # needs to be changed in different computers
+            database="project_db",  # needs to be changed in different computers
+            auth_plugin = 'mysql_native_password' # Database connection için gerekli. Eğer veritabanına bağlanmadıysa bu parametreyi silip deneyebilirsiniz.
         )
         if connection.is_connected():
             return connection
