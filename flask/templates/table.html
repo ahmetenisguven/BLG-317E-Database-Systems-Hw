@@ -12,15 +12,15 @@
         {% for i in range(0, columns|length) %}
         <th>
           {% if sort_column == columns[i] and sort_order == 'ASC' %}
-          <a href="?sort_column={{ columns[i] }}&sort_order=DESC" class="text-white">
+          <a href="?sort_column={{ columns[i] }}&sort_order=DESC&page={{ page }}&per_page={{ per_page }}" class="text-white">
             {{ mapped_columns[i] }} ▼
           </a>
           {% elif sort_column == columns[i] and sort_order == 'DESC' %}
-          <a href="?sort_column={{ columns[i] }}&sort_order=ASC" class="text-white">
+          <a href="?sort_column={{ columns[i] }}&sort_order=ASC&page={{ page }}&per_page={{ per_page }}" class="text-white">
             {{ mapped_columns[i] }} ▲
           </a>
           {% else %}
-          <a href="?sort_column={{ columns[i] }}&sort_order=ASC" class="text-white">
+          <a href="?sort_column={{ columns[i] }}&sort_order=ASC&page={{ page }}&per_page={{ per_page }}" class="text-white">
             {{ mapped_columns[i] }}
           </a>
           {% endif %}
@@ -39,6 +39,67 @@
     </tbody>
   </table>
 </div>
+
+<!-- Pagination Controls -->
+<div class="pagination">
+  <ul class="pagination-list">
+    {% if page > 1 %}
+    <li>
+      <a href="?page=1&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}" class="btn btn-secondary">
+        &laquo; First
+      </a>
+    </li>
+    <li>
+      <a href="?page={{ page - 1 }}&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}" class="btn btn-primary">
+        &lsaquo; Previous
+      </a>
+    </li>
+    {% endif %}
+
+    <!-- Page Up Button -->
+    {% if page > 1 %}
+    <li>
+      <a href="?page={{ page - 5 if page > 5 else 1 }}&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}" class="btn btn-info">
+        Page Up (-5)
+      </a>
+    </li>
+    {% endif %}
+
+    <!-- Current Page Buttons -->
+    {% for p in range(1, total_pages + 1) %}
+    {% if p >= page - 2 and p <= page + 2 %}
+    <li class="{% if p == page %}active{% endif %}">
+      <a href="?page={{ p }}&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}">
+        {{ p }}
+      </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+
+    <!-- Page Down Button -->
+    {% if page < total_pages %}
+    <li>
+      <a href="?page={{ page + 5 if page + 5 <= total_pages else total_pages }}&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}" class="btn btn-info">
+        Page Down (+5)
+      </a>
+    </li>
+    {% endif %}
+
+    {% if page < total_pages %}
+    <li>
+      <a href="?page={{ page + 1 }}&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}" class="btn btn-primary">
+        Next &rsaquo;
+      </a>
+    </li>
+    <li>
+      <a href="?page={{ total_pages }}&per_page={{ per_page }}&sort_column={{ sort_column }}&sort_order={{ sort_order }}" class="btn btn-secondary">
+        Last &raquo;
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+
 {% else %}
 <p class="alert alert-warning">No data available in this table.</p>
 {% endif %}

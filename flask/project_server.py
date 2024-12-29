@@ -211,6 +211,9 @@ def table_page(table_name):
     mapped_table_name = table_name_mapping.get(table_name, table_name.replace('_', ' ').title())
     sort_column = request.args.get('sort_column')  # Get the column to sort by
     sort_order = request.args.get('sort_order', 'ASC')  # Get the sort order (default to ASC)
+    page = request.args.get('page', default=1, type=int)  # Current page
+    per_page = request.args.get('per_page', default=20, type=int) ## CHANGE ROW SIZE OF EACH TABLE from here # Rows per page
+    
     if connection is None:
         flash("Couldn't connect to the database!", "danger")
         return render_template("table.html", table_name=table_name, columns=[], rows=[])
@@ -221,13 +224,23 @@ def table_page(table_name):
         columns = [column['Field'] for column in cursor.fetchall()]  # Get column names from the result
 
         mapped_columns = [column_mapping.get(col, col.replace('_', ' ').title()) for col in columns]
-        # Dynamic query needed to order by column names:
+        
+        # Count total rows for pagination
+        count_query = f"SELECT COUNT(*) AS total FROM {table_name}"
+        cursor.execute(count_query)
+        total_rows = cursor.fetchone()['total']
+        total_pages = (total_rows + per_page - 1) // per_page  # Calculate total pages
+        
+        # Monitoring on terminal that Dynamic query needed to order by column names:
         print("Columns:", columns)
         print("Mapped Columns:", mapped_columns)
 
         query = f"SELECT * FROM {table_name}"
         if sort_column in columns:
             query += f" ORDER BY {sort_column} {sort_order}"
+        
+        query += f" LIMIT {(page - 1) * per_page}, {per_page}"  # Add LIMIT for pagination
+
         cursor.execute(query)  # Get all rows from the table
         rows = cursor.fetchall()  # Fetch all rows
         
@@ -235,12 +248,16 @@ def table_page(table_name):
         flash(f"Query failed: {e}", "danger")
         columns = []
         rows = []
+        total_pages = 1 #total pages should be initialized
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
 
-    return render_template("table.html", table_name=mapped_table_name, columns=columns, mapped_columns=mapped_columns, rows=rows, sort_column=sort_column, sort_order=sort_order)
+    return render_template("table.html", table_name=mapped_table_name, columns=columns, mapped_columns=mapped_columns, rows=rows, sort_column=sort_column, sort_order=sort_order,
+        page=page, #extra pagination parameters.
+        total_pages=total_pages,
+        per_page=per_page)
 
 
 @app.route('/', methods=('GET', 'POST'))
