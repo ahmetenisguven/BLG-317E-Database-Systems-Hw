@@ -36,7 +36,7 @@ The game is powered by a well-structured relational database. Below is the Entit
 Follow these steps to set up Olympiadle on your local machine:
 
 ### Prerequisites:
-- Python 3.8+
+- Python 3.10+
 - A SQL database system (e.g., MySQL, PostgreSQL)
 
 ## 🎮 How to Play
